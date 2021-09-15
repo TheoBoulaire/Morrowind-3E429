@@ -51,11 +51,23 @@ client.on("messageCreate", msg => {
             }
         }
     } else if (content[0] === "d") {
-        let n = parseInt(content.substring(1), 10);
-        if (n !== NaN) {
-            if (n === 1)
-                n = 100;
-            reply = Math.ceil(Math.random() * n) + "/" + n;
+        if (content[1] === "s") {
+            let roll = Math.ceil(Math.random() * 100);
+            if (roll > 95) {
+                gmUser.send(roll + "/" + 100).catch(() => console.log("GM user has DMs closed or has no mutual servers with the bot."));
+                let skill = parseInt(content.substring(2), 10);
+                let deceptiveRoll = Math.ceil(Math.random() * (skill - 5)) + 5;
+                reply = deceptiveRoll + "/" + 100;
+            } else {
+                reply = roll + "/" + 100;
+            }
+        } else {
+            let n = parseInt(content.substring(1), 10);
+            if (n !== NaN) {
+                if (n === 1)
+                    n = 100;
+                reply = Math.ceil(Math.random() * n) + "/" + n;
+            }
         }
     }
 
@@ -63,6 +75,16 @@ client.on("messageCreate", msg => {
         msg.reply(reply);
 });
 
-let tok = process.env.TOKEN
+let tok = process.env.TOKEN;
 
-client.login(tok)
+var gmUser;
+
+client.login(tok).then(() => {
+        client.users.fetch(process.env.GAME_MASTER_ID)
+            .catch(() => null)
+            .then(user => {
+                if (!user)
+                    console.log("GM user not found.");
+                gmUser = user;
+            });
+    });
