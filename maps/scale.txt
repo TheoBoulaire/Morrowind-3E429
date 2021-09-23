@@ -3,4 +3,5 @@ Distance between the Red Mountain and Mournhold :
 250 miles = 402,336 km
 4.69486023132km/px
 377px
-1.067m/px
+1.067km/px
+100m/px
