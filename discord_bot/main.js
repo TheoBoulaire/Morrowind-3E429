@@ -5,6 +5,9 @@ const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Disc
 
 const Constants = require('./constants');
 
+const nearley = require("nearley");
+const grammar = require("./cmd.js");
+
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
@@ -33,7 +36,7 @@ client.on("messageCreate", msg => {
     let len = content.length;
 
     if (content[0] === "n" && len > 1) {
-        const peuple = Constants.noms[content[1]];
+        const peuple = Constants.names[content[1]];
         if (peuple !== undefined) {
             if (peuple.t !== undefined)
                 reply = peuple.t;
@@ -50,29 +53,41 @@ client.on("messageCreate", msg => {
                 reply += getRandomN(N, peuple.p, peuple.s);
             }
         }
-    } else if (content[0] === "d") {
-        if (content[1] === "s") {
-            let roll = Math.ceil(Math.random() * 100);
-            if (roll > 95) {
-                gmUser.send(roll + "/" + 100).catch(() => console.log("GM user has DMs closed or has no mutual servers with the bot."));
-                let skill = parseInt(content.substring(2), 10);
-                let deceptiveRoll = Math.ceil(Math.random() * (skill - 5)) + 5;
-                reply = deceptiveRoll + "/" + 100;
-            } else {
-                reply = roll + "/" + 100;
+    } else {
+        try {
+            const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
+            parser.feed(content);
+            let obj = parser.results[0][0];
+            switch (obj.cmd) {
+                case "dice":
+                    reply = Math.ceil(Math.random() * obj.n) + "/" + obj.n;
+                    break;
+                case "hidden_dice":
+                    let roll = Math.ceil(Math.random() * obj.n);
+                    if (roll > (obj.n - obj.critical)) {
+                        gmUser.send(roll + "/" + obj.n).catch(() => console.log("GM user has DMs closed or has no mutual servers with the bot."));
+                        roll = Math.ceil(Math.random() * (obj.skill - obj.critical)) + obj.critical;
+                    }
+                    reply = roll + "/" + obj.n;
+                    break;
+                case "description":
+                    reply = Constants.descriptions[obj.name];
+                    break;
+                case "resource":
+                    let resource = Constants.resources[obj.code];
+                    if (resource)
+                        msg.author.send(resource);
+                    break;
             }
-        } else {
-            let n = parseInt(content.substring(1), 10);
-            if (n !== NaN) {
-                if (n === 1)
-                    n = 100;
-                reply = Math.ceil(Math.random() * n) + "/" + n;
-            }
+        } catch(error) {
+            reply = null;
         }
     }
 
-    if (reply !== null)
+    if (reply !== null) {
+        console.log(content);
         msg.reply(reply);
+    }
 });
 
 let tok = process.env.TOKEN;

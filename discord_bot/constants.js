@@ -11,6 +11,93 @@ function deepFreeze(obj) {
     return Object.freeze(obj);
 }
 
+const descriptions = {
+    "Llunela": "Llunela Ulen, une Dunmer de petite taille et d’âge moyen pose son regard rouge perçant sur vous et vous adresse un large sourire. L’ivoire éclatant de ses dents détonne sur sa peau d’ardoise. Ses cheveux noirs nattés, serrés par un bel anneau d’argent, tombent sur son épaule gauche et se confondent presque avec son austère robe sombre au col haut et aux manches larges, serrée à la taille par une large étoffe pourpre brodée de fil d’or.",
+    "Ertis": "Un attroupement bruyant attire votre attention dans une ruelle parallèle. Là, une dizaine de citoyens de Gardefeu armés de bâtons harcèle un couple de Dunmers qui tente tant bien que mal de se protéger, leurs bras déjà contusionnés levés devant leur visage.",
+    "Jarning": "Un grand nordique émacié pose sur vous son œil vif. Un bandeau noir couvre l’autre et barre son visage ridé au grand sourire. Un tabouret de bois sépare ses beaux vêtements du sol poussiéreux sur lequel, devant lui, est posé un cadre de jeu.\n - Mesdames, messeigneurs, aimeriez-vous jeter quelques dés avec moi ?",
+    "Gelduin": "Une jeune Bosmer au visage creusé se jette sur vous. Vêtements sombres, un gourdin hérissé de clous dans la main droite, une sphère d’argile dans la main gauche.",
+    "enfantsc": "Une troupe d’enfants joyeux vous encercle. Ils fuient votre regard en riant sans oser vous adresser la parole jusqu’à ce que la plus téméraire d’entre eux se décide à vous demander :\n - Seigneurs, pouvez vous nous raconter un de vos exploits ?",
+    "enfantsf": "Un attroupement d’enfants aux cris féroces attire votre attention. Ils forment un cercle dont vous ne pouvez pas voir le centre qu’ils agonissent de pierres et d’injures.",
+    "Flacassia": "Vous rencontrez un femme couverte de bandages sales, agitant sa crécelle. Elle agite une écuelle dans laquelle sonnent quelques septims. Les badauds s’empressent de s’écarter d’elle.",
+    "Bratheru": "La porte s’ouvre brutalement sur un dunmer aux yeux rouges écarquillés. Ses longs cheveux argentés s’échappent de son chignon défait et contrastent sur sa peau indigo. Des tâches maculent son tablier, brûlé par endroits.",
+    "Vedelsa": "Une jeune Dunmer écarte le rideau. Vous êtes d’abord frappés par les traits sculpturaux de son visage, par l’éclat de ses cheveux anthracite, puis par son accoutrement singulier : un masque d’os percé de deux fines fentes cache à ses yeux l’éclat du brasier de sa forge et un épais tablier de cuir et des gants robustes protègent sa peau mauve des étincelles de métal ardent.",
+    "Drolnor": "Le Dunmer à la silhouette menue qui vous tient en joue présente des traits délicats et peu marqués sous son abondante crinière rousse. Il semble partagé entre la résolution suicidaire et le désespoir.",
+    "Aryne": "Maîtresse Aryne est une grande elfe noire au visage sillonné de rides profondes. Ses cheveux d’argent sont retenus derrière sa tête par un peigne de bois noir. Sous une tunique indigo ornée de motifs spiraux ocres, des bandes de tissu d’un vert très pâle reliées par des épingles d’or couvrent son corps de près. A sa ceinture de cuir gravée de lettres dunmeri sont fixés l’étui d’une loupe, diverses bourses de tissu et un assortiment de fioles multicolores."
+};
+
+const resources = {
+    "pccs": `[Ingrédients]
+Trente livres de résine de champignon Telvanni
+Trois amphores de liqueur
+Une livre de pétales de fleur de roche
+Vingt livres de sel
+
+[Exécution]
+Hacher les pétales le plus finement possible. Les mélanger au sel et laisser reposer trois jours.
+Réduire la résine en poudre. L’incorporer à la liqueur. Y ajouter aussi le mélange de sel et de pétales. Retirer les lambeaux de pétales qui surnagent.
+
+[Informations complémentaires]
+Pour maximiser l’efficacité du philtre il doit être agité tous les jours afin d’éviter que des phases ne se forment. Tant que les cadavres avec lesquels il est mis en contact sont vidés au préalable de leurs fluides, il peut être réutilisé. Il est possible, avec une préparation dans les quantités indiquées ci-dessus, de traiter une centaine de cadavres, car les corps n'absorbent qu’une petite quantité du philtre. Toutefois, les cadavres, mêmes vidés de leurs fluides, rendent de l’eau qui dilue le philtre. Il faut donc laisser décanter le philtre entre deux utilisations, puis en retirer la phase alcoolique surnageante afin de la distiller. Il s’agit d’enlever environ une amphore de liquide par traitement.`,
+
+    "eab": `[Avant-propos]
+Cet élixir miraculeux changera la face du monde. Partage cette formidable recette, ne la conserve pas jalousement ! Mais ne te mets pas en travers de sa destinée où tu seras écrasé.
+Le génial inventeur de ce breuvage fantastique se nomme Bratheru Tedran, grand alchimiste de la maison Telvanni. Si vous souhaitez profiter de ses conseils avisés (et pourtant gratuits), vous trouverez son prodigieux laboratoire à Tel Mallari.
+
+[Ingrédients]
+Un dixième de drachme d’agranat de guède des versants sud
+Un vingtième de drachme de suc de murex pourpre
+Cinq drachmes de sucre de lune
+Une demi-once de gelée de netch
+Une hémine de mazte
+
+[Exécution]
+Verse la gelée de netch dans un creuset. Effrite l’agranat de guède et ajoute la poudre obtenue ainsi que le suc de murex et le sucre de lune à la gelée de netch.
+Fais chauffer le tout à haute température jusqu’à ce que le mélange s’homogénéise et prenne une teinte bleue outremer.
+Verse alors rapidement le contenu du creuset dans une bassine d’eau froide afin qu’il refroidisse brutalement. La pâte ne se mélange pas à l’eau et décante au fond de la bassine.
+Après quelques minutes, jette l’eau et racle la pâte au fond de la bassine.
+Mélange la pâte à la mazte et agite avec énergie. Après effervescence, l’élixir est prêt à produire ses miracles.
+
+[Usage]
+Les quantités indiquées correspondent à une dose d’élixir.
+Buvez-le et, pendant une demi-journée, votre vivacité d’esprit sera telle que ce sera comme si le temps passait au ralenti.`,
+
+    "pim": `[Ingrédients]
+Un chapeau de coprin violet
+Une livre d’anthères noires
+Une once de lichen vert
+Quatre globes oculaires d’alit
+
+[Exécution]
+Faire sécher le coprin violet.
+Couper les anthères des fleurs.
+Faire brûler le lichen sans contaminer la cendre avec de la cendre d’un autre matériau.
+Mélanger la cendre de lichen, les anthères et le coprin sec et les pulvériser dans un mortier.
+Ouvrir les yeux d’alit et en extraire l’humeur vitrée.
+Mélanger la poudre et l’humeur vitrée, puis étaler la pâte sur une toile fine et la laisser sécher. Racler les résidus, les broyer et les faire sécher deux fois supplémentaires.
+
+[Usage]
+Ces proportions correspondent à une dose de poison. La poudre est neutralisée par l’alcool. Les premiers symptômes (vertiges, torpeur) se déclarent en une heure. La mort survient en deux heures pour les elfes et les khajiits, en trois heures pour les hommes et en sept heures pour les Argoniens.`,
+
+    "vm": `[Ingrédients]
+Un setier d’huile
+Une once de baies communes
+Une livre de kanet dorées
+Cinq drachmes de sel de feu
+
+[Exécution]
+Distiller les kanets dans un alambic. Laisser décanter le distillat et ne garder que la phase supérieure.
+Ouvrir les baies communes et en retirer les pépins. Laver les pépins, puis les broyer dans un mortier. Laisser décanter le broyat et ne garder que la phase supérieure.
+Mélanger l’huile de kanet, l’huile de baie commune et le sel de feu. Chauffer le mélange à la température d’ébullition de l’eau, mais sans la dépasser, pendant au moins dix minutes.
+Diluer dans la fiole d’huile.
+
+[Usage]
+Les lames ointes de cette huile tuent elfes et hommes en un quart d’heure environ. Les khajiits et les argoniens n’y sont pas sensibles.
+Il existe un antivenin préparé à partir de suif de netch et de russule phosphorescente.
+La lame doit être ointe entre chaque utilisation.
+Cette huile, sur une pointe de trait pleine, glisse pendant le vol. Elle est utilisable sur une pointe creuse.
+Une fiole contient une dizaine de doses.`
+};
+
 const names = {
     "o": {
         "t": "Certains Orques remplacent le nom de leur parent par celui de leur clan ou de leur forteresse.",
@@ -5787,7 +5874,9 @@ const names = {
         'Thiirchel',
         'Uurwen' ]
     }
-}
+};
 module.exports = deepFreeze({
-    noms: names
+    names: names,
+    descriptions: descriptions,
+    resources: resources
 });
