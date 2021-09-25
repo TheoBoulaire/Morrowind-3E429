@@ -1,4 +1,4 @@
-main -> diceRoll | hiddenDiceRoll | description | ressource
+main -> diceRoll | hiddenDiceRoll | description | ressource | names
 diceRoll -> "d" (_ number):? {%
     function(data) {
         return {
@@ -33,6 +33,16 @@ ressource -> "res" _ word {%
         };
     }
 %}
+names -> "n" [obcdinhkargxf] [mf]:? number:? {%
+    function(data) {
+        return {
+            cmd: "names",
+            race: data[1],
+            sex: data[2],
+            n: data[3] === null ? 5 : data[3]
+        }
+    }
+%} 
 __ -> " ":+
 _ -> " ":*
 number -> [0-9]:+ {%

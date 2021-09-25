@@ -9,6 +9,7 @@ var grammar = {
     {"name": "main", "symbols": ["hiddenDiceRoll"]},
     {"name": "main", "symbols": ["description"]},
     {"name": "main", "symbols": ["ressource"]},
+    {"name": "main", "symbols": ["names"]},
     {"name": "diceRoll$ebnf$1$subexpression$1", "symbols": ["_", "number"]},
     {"name": "diceRoll$ebnf$1", "symbols": ["diceRoll$ebnf$1$subexpression$1"], "postprocess": id},
     {"name": "diceRoll$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
@@ -53,6 +54,20 @@ var grammar = {
                 cmd: "resource",
                 code: data[2]
             };
+        }
+        },
+    {"name": "names$ebnf$1", "symbols": [/[mf]/], "postprocess": id},
+    {"name": "names$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+    {"name": "names$ebnf$2", "symbols": ["number"], "postprocess": id},
+    {"name": "names$ebnf$2", "symbols": [], "postprocess": function(d) {return null;}},
+    {"name": "names", "symbols": [{"literal":"n"}, /[obcdinhkargxf]/, "names$ebnf$1", "names$ebnf$2"], "postprocess": 
+        function(data) {
+            return {
+                cmd: "names",
+                race: data[1],
+                sex: data[2],
+                n: data[3] === null ? 5 : data[3]
+            }
         }
         },
     {"name": "__$ebnf$1", "symbols": [{"literal":" "}]},
